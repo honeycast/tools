@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-	durs := flag.Int("wait", 30, "time to wait before release")
 	fname := flag.String("from", "", "name of container to clone from or create before cloning")
 	bname := flag.String("to", "", "name to use for clone")
 
@@ -115,10 +114,14 @@ func main() {
 		return
 	}
 
-	time.Sleep(time.Duration(*durs) * time.Second)
+	var dur int
+
+	fmt.Scan(&dur)
+
+	time.Sleep(time.Duration(durs) * time.Second)
 
 	lxc.Release(cloned)
 
-	time.Sleep(time.Duration(*durs) * time.Second)
+	time.Sleep(time.Duration(durs) * time.Second)
 
 }
