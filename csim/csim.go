@@ -54,7 +54,6 @@ func main() {
 	cloned := c.Clone(*bname, *cl)
 
 	lxc.Acquire(cloned)
-	defer lxc.Release(cloned)
 
 	var err error
 
@@ -99,5 +98,6 @@ func main() {
 	// }
 	//
 	time.Sleep(time.Duration(5) * time.Second)
+	lxc.Release(cloned)
 
 }
