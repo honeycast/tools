@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"gopkg.in/lxc/go-lxc.v2"
+	lxc "gopkg.in/lxc/go-lxc.v2"
 )
 
 func main() {
@@ -17,6 +17,8 @@ func main() {
 		log.Println("Unacceptable for names to be empty!")
 		return
 	}
+
+	var err error
 
 	cl := &lxc.CloneOptions{
 		Backend:  lxc.Aufs,
@@ -51,11 +53,21 @@ func main() {
 		}
 	}
 
-	cloned := c.Clone(*bname, *cl)
+	err = c.Clone(*bname, *cl)
+
+	if err != nil {
+		log.Println("Unable to clone", *bname)
+		return
+	}
+
+	cloned, err := lxc.NewContainer(*bname, lxc.DefaultConfigPath())
+
+	if err != nil {
+		log.Println("Unable to locate clone", *bname)
+		return
+	}
 
 	lxc.Acquire(cloned)
-
-	var err error
 
 	switch cloned.State() {
 	case lxc.FROZEN:
@@ -66,14 +78,14 @@ func main() {
 		log.Printf("Container in current State: %+s", cloned.State())
 	case lxc.RUNNING:
 		log.Printf("Container in current State: %+s", cloned.State())
-		return nil
+		return
 	default:
 		log.Printf("Container in current State: %+s", cloned.State())
 		err = fmt.Errorf("Bad controller")
 	}
 
 	if err != nil {
-		return nil
+		return
 	}
 
 	if !cloned.Wait(lxc.RUNNING, 60) {
