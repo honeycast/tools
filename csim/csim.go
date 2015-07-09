@@ -107,16 +107,16 @@ func main() {
 	// 	break
 	// }
 	//
-	clone.Freeze()
+	cloned.Freeze()
 
 	if !cloned.Wait(lxc.FROZEN, 60) {
 		log.Printf("Unable to freeze it (%+s)", *bname)
 		return
 	}
 
-	var dur int
+	var durs int
 
-	fmt.Scan(&dur)
+	fmt.Scan(&durs)
 
 	time.Sleep(time.Duration(durs) * time.Second)
 
