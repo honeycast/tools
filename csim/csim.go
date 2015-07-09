@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	durs := flag.Int("wait", 30, "time to wait before release")
 	fname := flag.String("from", "", "name of container to clone from or create before cloning")
 	bname := flag.String("to", "", "name to use for clone")
 
@@ -109,13 +110,15 @@ func main() {
 	//
 	clone.Freeze()
 
-	if !cloned.Wait(lxc.FROZEN, 30) {
+	if !cloned.Wait(lxc.FROZEN, 60) {
 		log.Printf("Unable to freeze it (%+s)", *bname)
 		return
 	}
 
+	time.Sleep(time.Duration(*durs) * time.Second)
+
 	lxc.Release(cloned)
 
-	time.Sleep(time.Duration(5) * time.Second)
+	time.Sleep(time.Duration(*durs) * time.Second)
 
 }
