@@ -41,7 +41,7 @@ func main() {
 		panic("Unable to get container")
 	}
 
-	defer lxc.Release(c)
+	lxc.Release(c)
 
 	if !c.Defined() {
 
@@ -66,8 +66,6 @@ func main() {
 		log.Println("Unable to locate clone", *bname)
 		return
 	}
-
-	lxc.Acquire(cloned)
 
 	switch cloned.State() {
 	case lxc.FROZEN:
@@ -109,7 +107,15 @@ func main() {
 	// 	break
 	// }
 	//
-	time.Sleep(time.Duration(5) * time.Second)
+	clone.Freeze()
+
+	if !cloned.Wait(lxc.FROZEN, 30) {
+		log.Printf("Unable to freeze it (%+s)", *bname)
+		return
+	}
+
 	lxc.Release(cloned)
+
+	time.Sleep(time.Duration(5) * time.Second)
 
 }
